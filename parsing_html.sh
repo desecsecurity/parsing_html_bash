@@ -1,4 +1,10 @@
 #!/bin/bash
+# Titulo: Parsing_HTML_Bash 
+# Versao: 1.0 
+# Data: 14/10/2019 
+# Homepage: https://www.desecsecurity.com
+# Tested on: macOS/Linux
+
 if [ "$1" == "" ]
 then
 echo -e "\033[1;33m#########################################\033[0m"
