@@ -1,2 +1,4 @@
-# parsing_html_bash
-Script para Parsing HTML
+# Parsing HTML Bash Script
+
+
+Este script tem a funcionalidade de ralizar parsing em sites HTML, evidenciando domínios encontrados.
