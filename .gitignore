@@ -1,0 +1,10 @@
+# Ignore UNIX backup files
+*~
+*.swp
+*.log
+*.html
+*.txt
+*.php
+*.hosts
+*.ip
+*.ips
