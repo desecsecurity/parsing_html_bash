@@ -1,7 +1,7 @@
 #!/bin/bash
 # Titulo: Parsing_HTML_Bash 
-# Versao: 1.0 
-# Data: 14/10/2019 
+# Versao: 1.1 
+# Data: 16/10/2019 
 # Homepage: https://www.desecsecurity.com
 # Tested on: macOS/Linux
 
