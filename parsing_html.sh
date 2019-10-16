@@ -28,10 +28,8 @@ echo -e "\033[1;33m#############################################################
 # Para cada HOST encontrado, checa o status code de retorno
 for i in $(cat "$1.hosts")
 do
-    
-    status_code = $(curl -m 2 -o /dev/null -s -w "%{http_code}\n" $i)   # -m 2 = timeout (2 segundos)
+    status_code=$(curl -m 2 -o /dev/null -s -w "%{http_code}\n" $i)   # -m 2 = timeout (2 segundos)
     echo -e "$i [CODE : ${status_code}]"
-
 done
 
 echo -e "\033[1;33m#############################################################\033[0m"
