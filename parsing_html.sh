@@ -6,21 +6,34 @@
 # Tested on: macOS/Linux
 
 if [ "$1" == "" ]
-then
-echo -e "\033[1;33m#########################################\033[0m"
-echo -e "\033[40;1;33m|->           PARSING HTML            <-|\033[0m"
-echo -e "\033[40;1;33m|-> Desec Security - Ricardo Longatto <-|\033[0m"
-echo -e "\033[40;1;33m|-> $0 www.alvo.com.br <-|\033[0m"
-echo -e "\033[1;33m#########################################\033[0m"
+then    
+    echo -e "\033[1;33m#########################################\033[0m"
+    echo -e "\033[40;1;33m|->           PARSING HTML            <-|\033[0m"
+    echo -e "\033[40;1;33m|-> Desec Security - Ricardo Longatto <-|\033[0m"
+    echo -e "\033[40;1;33m|-> $0 www.alvo.com.br <-|\033[0m"
+    echo -e "\033[1;33m#########################################\033[0m"
+    
 else
-wget -q $1
-mv index.html $1.html
-grep "href" $1.html | cut -d "/" -f 3 | grep "\." | cut -d '"' -f 1 | grep -v "<l" | grep -v "www." | sort -u > $1.hosts
+    wget -q $1
+    mv index.html $1.html
+    grep "href" $1.html | cut -d "/" -f 3 | grep "\." | cut -d '"' -f 1 | grep -v "<l" | grep -v "www." | sort -u > $1.hosts
+
+
 for h in $(cat "$1.hosts");do host $h;done | grep "has address" > $1.ip
 echo -e "\033[1;33m#############################################################\033[0m"
 echo -e "\033[40;1;33m|->                 Buscando Hosts...                     <-|\033[0m"
 echo -e "\033[1;33m#############################################################\033[0m"
-cat $1.hosts
+
+
+# Para cada HOST encontrado, checa o status code de retorno
+for i in $(cat "$1.hosts")
+do
+    
+    status_code = $(curl -m 2 -o /dev/null -s -w "%{http_code}\n" $i)   # -m 2 = timeout (2 segundos)
+    echo -e "$i [CODE : ${status_code}]"
+
+done
+
 echo -e "\033[1;33m#############################################################\033[0m"
 echo -e "\033[40;1;33m|->                 Resolvendo Hosts...                   <-|\033[0m"
 echo -e "\033[1;33m#############################################################\033[0m"
