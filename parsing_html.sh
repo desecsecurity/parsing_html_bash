@@ -58,7 +58,7 @@ __Help__() {
     \thosts vivos.\n \
     \nOPTIONS\n \
     \t-h) - Mostra o menu de ajuda.\n\n \
-    \t-v) - Mostra a versão do programa.\n\n \
+    \t-v) - Mostra a versão do programa.\n\n"
 }
 
 # ==============================================================================
