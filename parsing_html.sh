@@ -58,7 +58,7 @@ __Help__() {
     \thosts vivos.\n \
     \nOPTIONS\n \
     \t-h) - Mostra o menu de ajuda.\n\n \
-    \t-v) - Mostra a versão do programa.\n\n \
+    \t-v) - Mostra a versão do programa.\n\n"
 }
 
 # ==============================================================================
@@ -97,8 +97,7 @@ __Download__() {
 # ==============================================================================
 
 __FindLinks__() {
-    grep "href" index.html | cut -d "/" -f 3 | grep "\." | cut -d '"' -f 1 | grep -v "<l" \
-    | grep -v "www." | sort -u > $ARG01.hosts
+    grep "href" index.html | cut -d "/" -f 3 | grep "\." | cut -d '"' -f 1 | grep -v "<l" | grep -v "www." | sort -u > $ARG01.hosts
 
 }
 
