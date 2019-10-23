@@ -11,67 +11,144 @@
 # ==============================================================================
 # Constantes
 # ==============================================================================
+
 RED='\033[31;1m'
 GREEN='\033[32;1m'
 BLUE='\033[34;1m'
 YELLOW='\033[33;1m'
 END='\033[m'
 
-# ==============================================================================
-# Verificando dependências
-# ==============================================================================
-[[ -e /usr/bin/wget ]] || printf "\nFaltando programa ${RED}wget${END} para funcionar.\n"
-[[ -e /usr/bin/curl ]] || printf "\nFaltando programa ${RED}curl${END} para funcionar.\n"
+ARG01=$1
+ARG02=$2
 
 # ==============================================================================
-# Verificando argumentos
+# Banner do programa
 # ==============================================================================
-if [[ "$1" == "" ]]; then
+
+__Banner__() {
     echo
     echo -e "${YELLOW}################################################################################${END}"
+    echo -e "${YELLOW}|->                                                                          <-|${END}"
     echo -e "${YELLOW}|->                           PARSING HTML                                   <-|${END}"
     echo -e "${YELLOW}|->                 Desec Security - Ricardo Longatto                        <-|${END}"
     echo -e "${YELLOW}|->                                                                          <-|${END}"
-    echo -e "${YELLOW}|-> Exemplo: $0 www.alvo.com.br                               <-|${END}"
     echo -e "${YELLOW}################################################################################${END}"
     echo
-    exit 1
-fi
+    echo "Usage: $0 [OPTION] [URL]"
+    echo "Ex: $0 www.site.com"
+    echo
+    echo "Try $0 -h for more options."
+    echo
+}
+
+# ==============================================================================
+# Menu de ajuda
+# ==============================================================================
+
+__Help__() {
+    printf "\n \
+    NAME\n \
+    \t$0 - Software para procura de links em páginas web.\n \
+    SYNOPSIS\n \
+    \t$0 [Options] [URL]\n \
+    DESCRIPTION\n \
+    \tO $0 é usado para procurar links em páginas web e verificar se existem \n \
+    \thosts vivos.\n \
+    OPTIONS\n \
+    \t-h - Mostra o menu de ajuda.\n \
+    \t-v - Mostra a versão do programa.\n \
+    \t-l - Mostra apenas os links encontrados.\n \
+    \t-o - Procura links em um arquivo.\n\n"
+}
+
+# ==============================================================================
+# Verificando dependências
+# ==============================================================================
+
+__Verification__() {
+    # Verificando as dependências.
+    if ! [[ -e /usr/bin/wget ]]; then
+        printf "\nFaltando programa ${RED}wget${END} para funcionar.\n"
+        exit 1
+    elif ! [[ -e /usr/bin/curl ]]; then
+        printf "\nFaltando programa ${RED}curl${END} para funcionar.\n"
+        exit 1
+    fi
+
+    # Verificando se não foi passado argumentos.
+    if [ "$ARG01" == "" ]; then
+        __Banner__
+        echo "BUG_01: $ARG01"
+        exit 1
+    fi
+}
 
 # ==============================================================================
 # Fazendo download da página
 # ==============================================================================
-wget -q $1 && mv index.html $1.html
+
+__Download__() {
+    rm -rf /tmp/1 &>/dev/null
+    mkdir /tmp/1 && cd /tmp/1
+    wget -q -c --show-progress $ARG01
+    mv index.html $ARG01.html
+}
 
 # ==============================================================================
 # Filtrando links
 # ==============================================================================
-grep "href" $1.html | cut -d "/" -f 3 | grep "\." | cut -d '"' -f 1 | grep -v "<l" | grep -v "www." | sort -u > $1.hosts
+
+__FindLinks__() {
+    grep "href" $ARG01.html | cut -d "/" -f 3 | grep "\." | cut -d '"' -f 1 | grep -v "<l" \
+    | grep -v "www." | sort -u > $ARG01.hosts
+
+}
 
 # ==============================================================================
 # Mostrando hosts encontrados
 # ==============================================================================
-echo
-echo -e "${YELLOW}################################################################################${END}"
-echo -e "${YELLOW}|->                       Buscando Hosts...                                  <-|${END}"
-echo -e "${YELLOW}################################################################################${END}"
-echo
 
-# Para cada HOST encontrado, checa o status code de retorno
-for i in $(cat "$1.hosts")
-do
-    status_code=$(curl -m 2 -o /dev/null -s -w "%{http_code}\n" $i)   # -m 2 = timeout (2 segundos)
-    echo -e "$i [CODE : ${status_code}]"
-done
+__FindHosts__() {
+    echo
+    echo -e "${YELLOW}################################################################################${END}"
+    echo -e "${YELLOW}|->                       Buscando Hosts...                                  <-|${END}"
+    echo -e "${YELLOW}################################################################################${END}"
+    echo
+
+    # Para cada HOST encontrado, checa o status code de retorno
+    for i in $(cat "$ARG01.hosts")
+    do
+        status_code=$(curl -m 2 -o /dev/null -s -w "%{http_code}\n" $i)   # -m 2 = timeout (2 segundos)
+        echo -e "$i [CODE : ${status_code}]"
+    done
+}
 
 # ==============================================================================
 # Verificando Hosts ativos
 # ==============================================================================
-echo
-echo -e "${YELLOW}################################################################################${END}"
-echo -e "${YELLOW}|->                       Resolvendo Hosts...                                <-|${END}"
-echo -e "${YELLOW}################################################################################${END}"
-echo
 
-for h in $(cat "$1.hosts");do host $h;done | grep "has address" > $1.ip
-cat $1.ip
+__LiveHosts__() {
+    echo
+    echo -e "${YELLOW}################################################################################${END}"
+    echo -e "${YELLOW}|->                       Resolvendo Hosts...                                <-|${END}"
+    echo -e "${YELLOW}################################################################################${END}"
+    echo
+
+    for h in $(cat "$ARG01.hosts");do host $h;done | grep "has address" > $ARG01.ip
+    cat $ARG01.ip
+}
+
+__Main__() {
+    __Verification__
+
+    __Download__
+
+    __FindLinks__
+
+    __FindHosts__
+
+    __LiveHosts__
+}
+
+
+__Main__
