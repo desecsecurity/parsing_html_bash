@@ -59,8 +59,6 @@ __Help__() {
     \nOPTIONS\n \
     \t-h) - Mostra o menu de ajuda.\n\n \
     \t-v) - Mostra a versão do programa.\n\n \
-    \t-l) - Mostra apenas os links encontrados.\n\n \
-    \t-o) - Procura links em um arquivo.\n\n"
 }
 
 # ==============================================================================
@@ -92,7 +90,6 @@ __Download__() {
     rm -rf /tmp/1 &>/dev/null
     mkdir /tmp/1 && cd /tmp/1
     wget -q -c --show-progress $ARG01
-    mv index.html $ARG01.html
 }
 
 # ==============================================================================
@@ -100,7 +97,7 @@ __Download__() {
 # ==============================================================================
 
 __FindLinks__() {
-    grep "href" $ARG01.html | cut -d "/" -f 3 | grep "\." | cut -d '"' -f 1 | grep -v "<l" \
+    grep "href" index.html | cut -d "/" -f 3 | grep "\." | cut -d '"' -f 1 | grep -v "<l" \
     | grep -v "www." | sort -u > $ARG01.hosts
 
 }
@@ -139,6 +136,10 @@ __LiveHosts__() {
     cat $ARG01.ip
 }
 
+# ==============================================================================
+# Função principal do programa
+# ==============================================================================
+
 __Main__() {
     __Verification__
 
@@ -149,9 +150,6 @@ __Main__() {
         "-h") __Help__
               exit 0
         ;;
-        "-l") printf "\nEm construção :)\n"
-              exit 0
-        ;;
         *) __Download__
            __FindLinks__
            __FindHosts__
@@ -160,5 +158,8 @@ __Main__() {
     esac
 }
 
+# ==============================================================================
+# Inicio do programa
+# ==============================================================================
 
 __Main__
