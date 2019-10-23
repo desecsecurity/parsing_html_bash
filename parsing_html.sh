@@ -2,7 +2,7 @@
 
 ################################################################################
 # Titulo    : Parsing_HTML_Bash                                                #
-# Versao    : 1.1                                                              #
+# Versao    : 1.2                                                              #
 # Data      : 16/10/2019                                                       #
 # Homepage  : https://www.desecsecurity.com                                    #
 # Tested on : macOS/Linux                                                      #
@@ -20,6 +20,8 @@ END='\033[m'
 
 ARG01=$1
 ARG02=$2
+
+VERSION='1.2'
 
 # ==============================================================================
 # Banner do programa
@@ -46,19 +48,19 @@ __Banner__() {
 # ==============================================================================
 
 __Help__() {
-    printf "\n \
-    NAME\n \
+    printf "\
+    \nNAME\n \
     \t$0 - Software para procura de links em páginas web.\n \
-    SYNOPSIS\n \
+    \nSYNOPSIS\n \
     \t$0 [Options] [URL]\n \
-    DESCRIPTION\n \
+    \nDESCRIPTION\n \
     \tO $0 é usado para procurar links em páginas web e verificar se existem \n \
     \thosts vivos.\n \
-    OPTIONS\n \
-    \t-h - Mostra o menu de ajuda.\n \
-    \t-v - Mostra a versão do programa.\n \
-    \t-l - Mostra apenas os links encontrados.\n \
-    \t-o - Procura links em um arquivo.\n\n"
+    \nOPTIONS\n \
+    \t-h) - Mostra o menu de ajuda.\n\n \
+    \t-v) - Mostra a versão do programa.\n\n \
+    \t-l) - Mostra apenas os links encontrados.\n\n \
+    \t-o) - Procura links em um arquivo.\n\n"
 }
 
 # ==============================================================================
@@ -78,7 +80,6 @@ __Verification__() {
     # Verificando se não foi passado argumentos.
     if [ "$ARG01" == "" ]; then
         __Banner__
-        echo "BUG_01: $ARG01"
         exit 1
     fi
 }
@@ -141,13 +142,22 @@ __LiveHosts__() {
 __Main__() {
     __Verification__
 
-    __Download__
-
-    __FindLinks__
-
-    __FindHosts__
-
-    __LiveHosts__
+    case $ARG01 in
+        "-v") printf "\nVersion: $VERSION\n"
+              exit 0
+        ;;
+        "-h") __Help__
+              exit 0
+        ;;
+        "-l") printf "\nEm construção :)\n"
+              exit 0
+        ;;
+        *) __Download__
+           __FindLinks__
+           __FindHosts__
+           __LiveHosts__
+        ;;
+    esac
 }
 
 
