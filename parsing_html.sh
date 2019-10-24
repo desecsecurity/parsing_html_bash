@@ -97,8 +97,7 @@ __Download__() {
 # ==============================================================================
 
 __FindLinks__() {
-    grep "href" index.html | cut -d "/" -f 3 | grep "\." | cut -d '"' -f 1 | grep -v "<l" \
-    | grep -v "www." | sort -u > $ARG01.hosts
+    grep "href" index.html | cut -d "/" -f 3 | grep "\." | cut -d '"' -f 1 | grep -v "<l" | grep -v "www." | sort -u > $ARG01.hosts
 
 }
 
