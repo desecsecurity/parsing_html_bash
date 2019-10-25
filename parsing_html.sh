@@ -2,7 +2,7 @@
 
 ################################################################################
 # Titulo    : Parsing_HTML_Bash                                                #
-# Versao    : 1.2                                                              #
+# Versao    : 1.3                                                              #
 # Data      : 16/10/2019                                                       #
 # Homepage  : https://www.desecsecurity.com                                    #
 # Tested on : macOS/Linux                                                      #
@@ -21,7 +21,7 @@ END='\033[m'
 ARG01=$1
 ARG02=$2
 
-VERSION='1.2'
+VERSION='1.3'
 
 # ==============================================================================
 # Banner do programa
@@ -70,8 +70,8 @@ __Verification__() {
     if ! [[ -e /usr/bin/wget ]]; then
         printf "\nFaltando programa ${RED}wget${END} para funcionar.\n"
         exit 1
-    elif ! [[ -e /usr/bin/curl ]]; then
-        printf "\nFaltando programa ${RED}curl${END} para funcionar.\n"
+    elif ! [[ -e /usr/bin/host ]]; then
+        printf "\nFaltando programa ${RED}host${END} para funcionar.\n"
         exit 1
     fi
 
@@ -89,6 +89,9 @@ __Verification__() {
 __Download__() {
     rm -rf /tmp/1 &>/dev/null
     mkdir /tmp/1 && cd /tmp/1
+
+
+    printf "\n${RED}[+] Donaload do site...${END}\n\n"
     wget -q -c --show-progress $ARG01
 }
 
@@ -97,8 +100,24 @@ __Download__() {
 # ==============================================================================
 
 __FindLinks__() {
-    grep "href" index.html | cut -d "/" -f 3 | grep "\." | cut -d '"' -f 1 | grep -v "<l" | grep -v "www." | sort -u > $ARG01.hosts
+    printf "\n${RED}[+] Filtrando Links...${END}\n"
 
+    # Quebranco as linhas para melhorar a seleção dos links, onde
+    # se encontram as palavras 'href' e 'action'.
+    sed -i "s/ /\n/g" index.html
+    grep -E "(href=|action=)" index.html > .tmp1
+
+    # Capturando o conteudo entre aspas e apostrofos.
+    grep -oh '"[^"]*"' .tmp1 > .tmp2
+    grep -oh "'[^']*'" .tmp1 >> .tmp2
+
+    # Removendo as aspas e apostrofos.
+    sed -i 's/"//g' .tmp2
+    sed -i "s/'//g" .tmp2
+
+    # Captura apeas as linhas que contenham pontos, e remove as
+    # semelhantes.
+    grep "\." .tmp2 | sort | uniq > links
 }
 
 # ==============================================================================
@@ -106,18 +125,23 @@ __FindLinks__() {
 # ==============================================================================
 
 __FindHosts__() {
-    echo
-    echo -e "${YELLOW}################################################################################${END}"
-    echo -e "${YELLOW}|->                       Buscando Hosts...                                  <-|${END}"
-    echo -e "${YELLOW}################################################################################${END}"
-    echo
+    printf "\n${RED}[+] Filtrando Hosts...${END}\n"
 
-    # Para cada HOST encontrado, checa o status code de retorno
-    for i in $(cat "$ARG01.hosts")
-    do
-        status_code=$(curl -m 2 -o /dev/null -s -w "%{http_code}\n" $i)   # -m 2 = timeout (2 segundos)
-        echo -e "$i [CODE : ${status_code}]"
-    done
+    # Quebrando as URLs para facilitar a procurar links no corpo da URL.
+    cp links links2
+    sed -i "s/?/\n/g" links2
+
+    # Utilizando expressões regulares para utilizar os links simples.
+    grep -oh "//[^/]*/" links2 > .tmp10
+    grep -oh "//[^/]*" links2 >> .tmp10
+    grep -oh "www.*\.br" links2 >> .tmp10
+    grep -oh "www.*\.net" links2 >> .tmp10
+    grep -oh "www.*\.org[^\.br]" links2 >> .tmp10
+    grep -oh "www.*\.com[^\.br]" links2 >> .tmp10
+
+    # Removendo as barras e filtrando as linhas com pontos.
+    sed -i "s/\///g" .tmp10
+    grep "\." .tmp10 | sort | uniq > hosts
 }
 
 # ==============================================================================
@@ -125,14 +149,56 @@ __FindHosts__() {
 # ==============================================================================
 
 __LiveHosts__() {
-    echo
-    echo -e "${YELLOW}################################################################################${END}"
-    echo -e "${YELLOW}|->                       Resolvendo Hosts...                                <-|${END}"
-    echo -e "${YELLOW}################################################################################${END}"
-    echo
+     printf "\n${RED}[+] Procurando Hosts ativos...${END}\n"
 
-    for h in $(cat "$ARG01.hosts");do host $h;done | grep "has address" > $ARG01.ip
-    cat $ARG01.ip
+     while read linha; do
+        host $linha 2>/dev/null | grep "has address" | sed "s/has address/ ----------------- /g" >> live-hosts
+    done < hosts
+}
+
+# ==============================================================================
+# Mostrando links encontrados
+# ==============================================================================
+
+__ShowLinks__() {
+    echo
+    echo -e "${YELLOW}################################################################################${END}"
+    echo -e "${YELLOW}|->                       Links encontrados.                                 <-|${END}"
+    echo -e "${YELLOW}################################################################################${END}"
+    echo
+    while read linha; do
+        echo $linha
+    done < links
+}
+
+# ==============================================================================
+# Mostrando Hosts encontrados
+# ==============================================================================
+
+__ShowHosts__() {
+    echo
+    echo -e "${YELLOW}################################################################################${END}"
+    echo -e "${YELLOW}|->                       Hosts encontrados.                                 <-|${END}"
+    echo -e "${YELLOW}################################################################################${END}"
+    echo
+    while read linha; do
+        echo $linha
+    done < hosts
+}
+
+# ==============================================================================
+# Mostrando Hosts ativos
+# ==============================================================================
+
+__ShowLiveHosts__() {
+    echo
+    echo -e "${YELLOW}################################################################################${END}"
+    echo -e "${YELLOW}|->                          Hosts ativos                                     <-|${END}"
+    echo -e "${YELLOW}################################################################################${END}"
+    echo
+    while read linha; do
+        echo $linha
+    done < live-hosts
 }
 
 # ==============================================================================
@@ -153,6 +219,9 @@ __Main__() {
            __FindLinks__
            __FindHosts__
            __LiveHosts__
+           __ShowLinks__
+           __ShowHosts__
+           __ShowLiveHosts__
         ;;
     esac
 }
