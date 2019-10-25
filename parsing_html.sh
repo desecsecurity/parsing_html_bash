@@ -70,8 +70,8 @@ __Verification__() {
     if ! [[ -e /usr/bin/wget ]]; then
         printf "\nFaltando programa ${RED}wget${END} para funcionar.\n"
         exit 1
-    elif ! [[ -e /usr/bin/curl ]]; then
-        printf "\nFaltando programa ${RED}curl${END} para funcionar.\n"
+    elif ! [[ -e /usr/bin/host ]]; then
+        printf "\nFaltando programa ${RED}host${END} para funcionar.\n"
         exit 1
     fi
 
