@@ -2,7 +2,7 @@
 
 ################################################################################
 # Titulo    : Parsing_HTML_Bash                                                #
-# Versao    : 1.3                                                              #
+# Versao    : 1.4                                                              #
 # Data      : 16/10/2019                                                       #
 # Homepage  : https://www.desecsecurity.com                                    #
 # Tested on : macOS/Linux                                                      #
@@ -25,7 +25,7 @@ ARG01=$1
 ARG02=$2
 
 # Constante utilizada para guadar a versão do programa.
-VERSION='1.3'
+VERSION='1.4'
 
 # ==============================================================================
 # Banner do programa
@@ -41,6 +41,7 @@ __Banner__() {
     echo -e "${YELLOW}################################################################################${END}"
     echo
     echo "Usage: $0 [OPTION] [URL]"
+    echo
     echo "Ex: $0 www.site.com"
     echo
     echo "Try $0 -h for more options."
@@ -62,7 +63,9 @@ __Help__() {
     \thosts vivos.\n \
     \nOPTIONS\n \
     \t-h) - Mostra o menu de ajuda.\n\n \
-    \t-v) - Mostra a versão do programa.\n\n"
+    \t-v) - Mostra a versão do programa.\n\n \
+    \t-o) - Procura links no arquivo informado.\n\n \
+    \t\tEx: $0 -o file.txt\n\n"
 }
 
 # ==============================================================================
@@ -87,18 +90,37 @@ __Verification__() {
 }
 
 # ==============================================================================
+# Limpando arquivos temporários
+# ==============================================================================
+
+__Clear__() {
+    rm -rf /tmp/1 &>/dev/null
+}
+
+# ==============================================================================
 # Fazendo download da página
 # ==============================================================================
 
 __Download__() {
     # É criado e utilizado um diretório em /tmp, para não sujar o sistema do
     # usuário.
-    rm -rf /tmp/1 &>/dev/null
+    __Clear__
     mkdir /tmp/1 && cd /tmp/1
 
     printf "\n${GREEN}[+] Download do site...${END}\n\n"
-    wget -q -c --show-progress $ARG01 || \
+    wget -q -c --show-progress $ARG01 -O FILE || \
     printf "\n${RED}[+] Erro no download do site${END}\n\n"
+}
+
+# ==============================================================================
+# Filtrando links
+# ==============================================================================
+
+__OpenFile__() {
+    __Clear__
+    mkdir /tmp/1
+    cp $ARG02 /tmp/1/FILE
+    cd /tmp/1
 }
 
 # ==============================================================================
@@ -110,8 +132,8 @@ __FindLinks__() {
 
     # Quebranco as linhas para melhorar a seleção dos links, onde
     # se encontram as palavras 'href' e 'action'.
-    sed -i "s/ /\n/g" index.html
-    grep -E "(href=|action=)" index.html > .tmp1
+    sed -i "s/ /\n/g" FILE
+    grep -E "(href=|action=)" FILE > .tmp1
 
     # Capturando o conteudo entre aspas e apostrofos.
     grep -oh '"[^"]*"' .tmp1 > .tmp2
@@ -199,7 +221,7 @@ __ShowHosts__() {
 __ShowLiveHosts__() {
     echo
     echo -e "${YELLOW}################################################################################${END}"
-    echo -e "${YELLOW}|->                          Hosts ativos                                     <-|${END}"
+    echo -e "${YELLOW}|->                          Hosts ativos                                    <-|${END}"
     echo -e "${YELLOW}################################################################################${END}"
     echo
     while read linha; do
@@ -221,6 +243,15 @@ __Main__() {
         "-h") __Help__
               exit 0
         ;;
+        "-o") __OpenFile__
+              __FindLinks__
+              __FindHosts__
+              __LiveHosts__
+              __ShowLinks__
+              __ShowHosts__
+              __ShowLiveHosts__
+              __Clear__
+        ;;
         *) __Download__
            __FindLinks__
            __FindHosts__
@@ -228,6 +259,7 @@ __Main__() {
            __ShowLinks__
            __ShowHosts__
            __ShowLiveHosts__
+           __Clear__
         ;;
     esac
 }
