@@ -83,7 +83,7 @@ __Verification__() {
     fi
 
     # Verificando se não foi passado argumentos.
-    if [ "$ARG01" == "" ]; then
+    if [[ "$ARG01" == "" ]]; then
         __Banner__
         exit 1
     fi
@@ -107,9 +107,12 @@ __Download__() {
     __Clear__
     mkdir /tmp/1 && cd /tmp/1
 
-    printf "\n${GREEN}[+] Download do site...${END}\n\n"
-    wget -q -c --show-progress $ARG01 -O FILE || \
-    printf "\n${RED}[+] Erro no download do site${END}\n\n"
+    if wget -q -c --show-progress $ARG01 -O FILE; then
+        printf "\n${GREEN}[+] Download do site...${END}\n\n"
+    else
+        printf "\n${RED}[+] Erro no download do site${END}\n\n"
+        exit 1
+    fi
 }
 
 # ==============================================================================
@@ -128,7 +131,7 @@ __OpenFile__() {
 # ==============================================================================
 
 __FindLinks__() {
-    printf "\n${RED}[+] Filtrando Links...${END}\n"
+    printf "\n${GREEN}[+] Filtrando Links...${END}\n"
 
     # Quebranco as linhas para melhorar a seleção dos links, onde
     # se encontram as palavras 'href' e 'action'.
@@ -153,7 +156,7 @@ __FindLinks__() {
 # ==============================================================================
 
 __FindHosts__() {
-    printf "\n${RED}[+] Filtrando Hosts...${END}\n"
+    printf "\n${GREEN}[+] Filtrando Hosts...${END}\n"
 
     # Quebrando as URLs para facilitar a procurar links no corpo da URL.
     cp links links2
@@ -177,7 +180,7 @@ __FindHosts__() {
 # ==============================================================================
 
 __LiveHosts__() {
-     printf "\n${RED}[+] Procurando Hosts ativos...${END}\n"
+     printf "\n${GREEN}[+] Procurando Hosts ativos...${END}\n"
 
      while read linha; do
         host $linha 2>/dev/null | grep "has address" | sed "s/has address/ ----------------- /g" >> live-hosts
