@@ -2,7 +2,7 @@
 
 ################################################################################
 # Titulo    : Parsing_HTML_Bash                                                #
-# Versao    : 1.3                                                              #
+# Versao    : 1.4                                                              #
 # Data      : 16/10/2019                                                       #
 # Homepage  : https://www.desecsecurity.com                                    #
 # Tested on : macOS/Linux                                                      #
@@ -12,16 +12,20 @@
 # Constantes
 # ==============================================================================
 
+# Constantes para facilitar a utilização das cores.
 RED='\033[31;1m'
 GREEN='\033[32;1m'
 BLUE='\033[34;1m'
 YELLOW='\033[33;1m'
 END='\033[m'
 
+# Constantes criadas utilizando os valores dos argumentos
+# passados, para evitando a perda dos valores.
 ARG01=$1
 ARG02=$2
 
-VERSION='1.3'
+# Constante utilizada para guadar a versão do programa.
+VERSION='1.4'
 
 # ==============================================================================
 # Banner do programa
@@ -37,6 +41,7 @@ __Banner__() {
     echo -e "${YELLOW}################################################################################${END}"
     echo
     echo "Usage: $0 [OPTION] [URL]"
+    echo
     echo "Ex: $0 www.site.com"
     echo
     echo "Try $0 -h for more options."
@@ -58,7 +63,9 @@ __Help__() {
     \thosts vivos.\n \
     \nOPTIONS\n \
     \t-h) - Mostra o menu de ajuda.\n\n \
-    \t-v) - Mostra a versão do programa.\n\n"
+    \t-v) - Mostra a versão do programa.\n\n \
+    \t-o) - Procura links no arquivo informado.\n\n \
+    \t\tEx: $0 -o file.txt\n\n"
 }
 
 # ==============================================================================
@@ -76,10 +83,18 @@ __Verification__() {
     fi
 
     # Verificando se não foi passado argumentos.
-    if [ "$ARG01" == "" ]; then
+    if [[ "$ARG01" == "" ]]; then
         __Banner__
         exit 1
     fi
+}
+
+# ==============================================================================
+# Limpando arquivos temporários
+# ==============================================================================
+
+__Clear__() {
+    rm -rf /tmp/1 &>/dev/null
 }
 
 # ==============================================================================
@@ -87,12 +102,28 @@ __Verification__() {
 # ==============================================================================
 
 __Download__() {
-    rm -rf /tmp/1 &>/dev/null
+    # É criado e utilizado um diretório em /tmp, para não sujar o sistema do
+    # usuário.
+    __Clear__
     mkdir /tmp/1 && cd /tmp/1
 
+    if wget -q -c --show-progress $ARG01 -O FILE; then
+        printf "\n${GREEN}[+] Download do site...${END}\n\n"
+    else
+        printf "\n${RED}[+] Erro no download do site${END}\n\n"
+        exit 1
+    fi
+}
 
-    printf "\n${RED}[+] Donaload do site...${END}\n\n"
-    wget -q -c --show-progress $ARG01
+# ==============================================================================
+# Filtrando links
+# ==============================================================================
+
+__OpenFile__() {
+    __Clear__
+    mkdir /tmp/1
+    cp $ARG02 /tmp/1/FILE
+    cd /tmp/1
 }
 
 # ==============================================================================
@@ -100,12 +131,12 @@ __Download__() {
 # ==============================================================================
 
 __FindLinks__() {
-    printf "\n${RED}[+] Filtrando Links...${END}\n"
+    printf "\n${GREEN}[+] Filtrando Links...${END}\n"
 
     # Quebranco as linhas para melhorar a seleção dos links, onde
     # se encontram as palavras 'href' e 'action'.
-    sed -i "s/ /\n/g" index.html
-    grep -E "(href=|action=)" index.html > .tmp1
+    sed -i "s/ /\n/g" FILE
+    grep -E "(href=|action=)" FILE > .tmp1
 
     # Capturando o conteudo entre aspas e apostrofos.
     grep -oh '"[^"]*"' .tmp1 > .tmp2
@@ -121,11 +152,11 @@ __FindLinks__() {
 }
 
 # ==============================================================================
-# Mostrando hosts encontrados
+# Filtrando hosts
 # ==============================================================================
 
 __FindHosts__() {
-    printf "\n${RED}[+] Filtrando Hosts...${END}\n"
+    printf "\n${GREEN}[+] Filtrando Hosts...${END}\n"
 
     # Quebrando as URLs para facilitar a procurar links no corpo da URL.
     cp links links2
@@ -149,11 +180,11 @@ __FindHosts__() {
 # ==============================================================================
 
 __LiveHosts__() {
-     printf "\n${RED}[+] Procurando Hosts ativos...${END}\n"
+     printf "\n${GREEN}[+] Procurando Hosts ativos...${END}\n"
 
      while read linha; do
         host $linha 2>/dev/null | grep "has address" | sed "s/has address/ ----------------- /g" >> live-hosts
-    done < hosts
+     done < hosts
 }
 
 # ==============================================================================
@@ -193,7 +224,7 @@ __ShowHosts__() {
 __ShowLiveHosts__() {
     echo
     echo -e "${YELLOW}################################################################################${END}"
-    echo -e "${YELLOW}|->                          Hosts ativos                                     <-|${END}"
+    echo -e "${YELLOW}|->                          Hosts ativos                                    <-|${END}"
     echo -e "${YELLOW}################################################################################${END}"
     echo
     while read linha; do
@@ -215,6 +246,15 @@ __Main__() {
         "-h") __Help__
               exit 0
         ;;
+        "-o") __OpenFile__
+              __FindLinks__
+              __FindHosts__
+              __LiveHosts__
+              __ShowLinks__
+              __ShowHosts__
+              __ShowLiveHosts__
+              __Clear__
+        ;;
         *) __Download__
            __FindLinks__
            __FindHosts__
@@ -222,6 +262,7 @@ __Main__() {
            __ShowLinks__
            __ShowHosts__
            __ShowLiveHosts__
+           __Clear__
         ;;
     esac
 }
