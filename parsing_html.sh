@@ -12,15 +12,19 @@
 # Constantes
 # ==============================================================================
 
+# Constantes para facilitar a utilização das cores.
 RED='\033[31;1m'
 GREEN='\033[32;1m'
 BLUE='\033[34;1m'
 YELLOW='\033[33;1m'
 END='\033[m'
 
+# Constantes criadas utilizando os valores dos argumentos
+# passados, para evitando a perda dos valores.
 ARG01=$1
 ARG02=$2
 
+# Constante utilizada para guadar a versão do programa.
 VERSION='1.3'
 
 # ==============================================================================
@@ -87,12 +91,14 @@ __Verification__() {
 # ==============================================================================
 
 __Download__() {
+    # É criado e utilizado um diretório em /tmp, para não sujar o sistema do
+    # usuário.
     rm -rf /tmp/1 &>/dev/null
     mkdir /tmp/1 && cd /tmp/1
 
-
-    printf "\n${RED}[+] Donaload do site...${END}\n\n"
-    wget -q -c --show-progress $ARG01
+    printf "\n${GREEN}[+] Download do site...${END}\n\n"
+    wget -q -c --show-progress $ARG01 || \
+    printf "\n${RED}[+] Erro no download do site${END}\n\n"
 }
 
 # ==============================================================================
@@ -121,7 +127,7 @@ __FindLinks__() {
 }
 
 # ==============================================================================
-# Mostrando hosts encontrados
+# Filtrando hosts
 # ==============================================================================
 
 __FindHosts__() {
@@ -153,7 +159,7 @@ __LiveHosts__() {
 
      while read linha; do
         host $linha 2>/dev/null | grep "has address" | sed "s/has address/ ----------------- /g" >> live-hosts
-    done < hosts
+     done < hosts
 }
 
 # ==============================================================================
