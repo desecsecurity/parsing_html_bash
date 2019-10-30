@@ -107,16 +107,17 @@ __Download__() {
     __Clear__
     mkdir /tmp/1 && cd /tmp/1
 
+    printf "\n${GREEN}[+] Download do site...${END}\n\n"
     if wget -q -c --show-progress $ARG01 -O FILE; then
-        printf "\n${GREEN}[+] Download do site...${END}\n\n"
+        printf "\n${GREEN}[+] Download completo!${END}\n\n"
     else
-        printf "\n${RED}[+] Erro no download do site${END}\n\n"
+        printf "\n${RED}[+] Falha no download!${END}\n\n"
         exit 1
     fi
 }
 
 # ==============================================================================
-# Filtrando links
+# Copiando arquivo para diretório temporario.
 # ==============================================================================
 
 __OpenFile__() {
@@ -131,8 +132,6 @@ __OpenFile__() {
 # ==============================================================================
 
 __FindLinks__() {
-    printf "\n${GREEN}[+] Filtrando Links...${END}\n"
-
     # Quebranco as linhas para melhorar a seleção dos links, onde
     # se encontram as palavras 'href' e 'action'.
     sed -i "s/ /\n/g" FILE
@@ -148,7 +147,7 @@ __FindLinks__() {
 
     # Captura apeas as linhas que contenham pontos, e remove as
     # semelhantes.
-    grep "\." .tmp2 | sort | uniq > links
+    grep "\." .tmp2 | sort -u > links
 }
 
 # ==============================================================================
@@ -156,8 +155,6 @@ __FindLinks__() {
 # ==============================================================================
 
 __FindHosts__() {
-    printf "\n${GREEN}[+] Filtrando Hosts...${END}\n"
-
     # Quebrando as URLs para facilitar a procurar links no corpo da URL.
     cp links links2
     sed -i "s/?/\n/g" links2
@@ -172,18 +169,24 @@ __FindHosts__() {
 
     # Removendo as barras e filtrando as linhas com pontos.
     sed -i "s/\///g" .tmp10
-    grep "\." .tmp10 | sort | uniq > hosts
+    grep "\." .tmp10 | sort -u > hosts
 }
 
 # ==============================================================================
-# Verificando Hosts ativos
+# Verificando e mostrando Hosts ativos
 # ==============================================================================
 
 __LiveHosts__() {
-     printf "\n${GREEN}[+] Procurando Hosts ativos...${END}\n"
+    echo
+    echo -e "${YELLOW}################################################################################${END}"
+    echo -e "${YELLOW}|->                          Hosts ativos                                    <-|${END}"
+    echo -e "${YELLOW}################################################################################${END}"
+    echo
 
+    # Como será a uma das ultimas funções executadas, e a mais demorada,
+    # será executada e o seu resultado será mostrado na tela ao mesmo tempo.
      while read linha; do
-        host $linha 2>/dev/null | grep "has address" | sed "s/has address/ ----------------- /g" >> live-hosts
+        host $linha 2>/dev/null | grep "has address" | sed "s/has address/ ----------------- /g"
      done < hosts
 }
 
@@ -218,21 +221,6 @@ __ShowHosts__() {
 }
 
 # ==============================================================================
-# Mostrando Hosts ativos
-# ==============================================================================
-
-__ShowLiveHosts__() {
-    echo
-    echo -e "${YELLOW}################################################################################${END}"
-    echo -e "${YELLOW}|->                          Hosts ativos                                    <-|${END}"
-    echo -e "${YELLOW}################################################################################${END}"
-    echo
-    while read linha; do
-        echo $linha
-    done < live-hosts
-}
-
-# ==============================================================================
 # Função principal do programa
 # ==============================================================================
 
@@ -248,20 +236,18 @@ __Main__() {
         ;;
         "-o") __OpenFile__
               __FindLinks__
-              __FindHosts__
-              __LiveHosts__
               __ShowLinks__
+              __FindHosts__
               __ShowHosts__
-              __ShowLiveHosts__
+              __LiveHosts__
               __Clear__
         ;;
         *) __Download__
            __FindLinks__
-           __FindHosts__
-           __LiveHosts__
            __ShowLinks__
+           __FindHosts__
            __ShowHosts__
-           __ShowLiveHosts__
+           __LiveHosts__
            __Clear__
         ;;
     esac
