@@ -157,7 +157,8 @@ __FindLinks__() {
 __FindHosts__() {
     # Quebrando as URLs para facilitar a procurar links no corpo da URL.
     cp links links2
-    sed -i "s/?/\n/g" links2
+    sed -i "s/?/\n/g
+            s/\/\/\//\n\/\//g" links2
 
     # Utilizando expressões regulares para utilizar os links simples.
     grep -oh "//[^/]*/" links2 > .tmp10
