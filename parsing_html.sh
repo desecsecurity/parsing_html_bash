@@ -145,7 +145,7 @@ __FindLinks__() {
     sed -i 's/"//g' .tmp2
     sed -i "s/'//g" .tmp2
 
-    # Captura apeas as linhas que contenham pontos, e remove as
+    # Captura apenas as linhas que contenham pontos, e remove as
     # semelhantes.
     grep "\." .tmp2 | sort -u > links
 }
@@ -155,12 +155,12 @@ __FindLinks__() {
 # ==============================================================================
 
 __FindHosts__() {
-    # Quebrando as URLs para facilitar a procurar links no corpo da URL.
+    # Quebrando as URLs para facilitar a procurar de links no corpo da URL.
     cp links links2
     sed -i "s/?/\n/g
             s/\/\/\//\n\/\//g" links2
 
-    # Utilizando expressões regulares para utilizar os links simples.
+    # Utilizando expressões regulares para procurar os links simples.
     grep -oh "//[^/]*/" links2 > .tmp10
     grep -oh "//[^/]*" links2 >> .tmp10
     grep -oh "www.*\.br" links2 >> .tmp10
@@ -184,10 +184,10 @@ __LiveHosts__() {
     echo -e "${YELLOW}################################################################################${END}"
     echo
 
-    # Como será a uma das ultimas funções executadas, e a mais demorada,
-    # será executada e o seu resultado será mostrado na tela ao mesmo tempo.
+    # Como será a uma das ultimas funções executadas, seu resultado será
+    # mostrado na tela ao mesmo tempo.
      while read linha; do
-        host $linha 2>/dev/null | grep "has address" | sed "s/has address/ ----------------- /g"
+        host $linha 2>/dev/null | grep "has address" | awk '{print $4 "\t\t" $1}'
      done < hosts
 }
 
