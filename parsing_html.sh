@@ -2,7 +2,7 @@
 
 ################################################################################
 # Titulo    : Parsing_HTML_Bash                                                #
-# Versao    : 1.4                                                              #
+# Versao    : 1.5                                                              #
 # Data      : 16/10/2019                                                       #
 # Homepage  : https://www.desecsecurity.com                                    #
 # Tested on : macOS/Linux                                                      #
@@ -25,7 +25,7 @@ ARG01=$1
 ARG02=$2
 
 # Constante utilizada para guadar a versão do programa.
-VERSION='1.4'
+VERSION='1.5'
 
 # ==============================================================================
 # Banner do programa
@@ -34,10 +34,10 @@ VERSION='1.4'
 __Banner__() {
     echo
     echo -e "${YELLOW}################################################################################${END}"
-    echo -e "${YELLOW}|->                                                                          <-|${END}"
-    echo -e "${YELLOW}|->                           PARSING HTML                                   <-|${END}"
-    echo -e "${YELLOW}|->                 Desec Security - Ricardo Longatto                        <-|${END}"
-    echo -e "${YELLOW}|->                                                                          <-|${END}"
+    echo -e "${YELLOW}#                                                                              #${END}"
+    echo -e "${YELLOW}#                             PARSING HTML                                     #${END}"
+    echo -e "${YELLOW}#                   Desec Security - Ricardo Longatto                          #${END}"
+    echo -e "${YELLOW}#                                                                              #${END}"
     echo -e "${YELLOW}################################################################################${END}"
     echo
     echo "Usage: $0 [OPTION] [URL]"
@@ -180,7 +180,7 @@ __FindHosts__() {
 __LiveHosts__() {
     echo
     echo -e "${YELLOW}################################################################################${END}"
-    echo -e "${YELLOW}|->                          Hosts ativos                                    <-|${END}"
+    echo -e "${YELLOW}#                            Hosts ativos                                      #${END}"
     echo -e "${YELLOW}################################################################################${END}"
     echo
 
@@ -198,7 +198,7 @@ __LiveHosts__() {
 __ShowLinks__() {
     echo
     echo -e "${YELLOW}################################################################################${END}"
-    echo -e "${YELLOW}|->                       Links encontrados.                                 <-|${END}"
+    echo -e "${YELLOW}#                         Links encontrados.                                   #${END}"
     echo -e "${YELLOW}################################################################################${END}"
     echo
     while read linha; do
@@ -213,12 +213,22 @@ __ShowLinks__() {
 __ShowHosts__() {
     echo
     echo -e "${YELLOW}################################################################################${END}"
-    echo -e "${YELLOW}|->                       Hosts encontrados.                                 <-|${END}"
+    echo -e "${YELLOW}#                         Hosts encontrados.                                   #${END}"
     echo -e "${YELLOW}################################################################################${END}"
     echo
     while read linha; do
         echo $linha
     done < hosts
+}
+
+# ==============================================================================
+# Mostrando quantidade de links e Hosts encontrados.
+# ==============================================================================
+
+__ShowResume__() {
+    printf "\n${YELLOW}================================================================================${END}\n\n"
+    printf "Found :\t" ; wc -l links
+    printf "\t" ; wc -l hosts
 }
 
 # ==============================================================================
@@ -241,6 +251,7 @@ __Main__() {
               __FindHosts__
               __ShowHosts__
               __LiveHosts__
+              __ShowResume__
               __Clear__
         ;;
         *) __Download__
@@ -249,6 +260,7 @@ __Main__() {
            __FindHosts__
            __ShowHosts__
            __LiveHosts__
+           __ShowResume__
            __Clear__
         ;;
     esac
