@@ -72,7 +72,7 @@ __Help__() {
 }
 
 # ==============================================================================
-# Verificando dependências
+# Verificação básica
 # ==============================================================================
 
 __Verification__() {
@@ -124,6 +124,14 @@ __Download__() {
 # ==============================================================================
 
 __OpenFile__() {
+    if [[ $ARG02 == "" ]]; then
+        echo -e "\n${RED}!!! File required !!!${END}\n"
+        exit 1
+    elif ! [[ -e $ARG02 ]]; then
+        printf "\n${RED}!!! File not found !!!${END}\n"
+        exit 1
+    fi
+
     __Clear__
     mkdir /tmp/1
     cp $ARG02 /tmp/1/FILE
