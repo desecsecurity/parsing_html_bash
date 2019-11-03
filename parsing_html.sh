@@ -36,7 +36,7 @@ __Banner__() {
     echo -e "${YELLOW}################################################################################${END}"
     echo -e "${YELLOW}#                                                                              #${END}"
     echo -e "${YELLOW}#                             PARSING HTML                                     #${END}"
-    echo -e "${YELLOW}#                   Desec Security - Ricardo Longatto                          #${END}"
+    echo -e "${YELLOW}#                            Desec Security                                    #${END}"
     echo -e "${YELLOW}#                             Version $VERSION                                      #${END}"
     echo -e "${YELLOW}#                                                                              #${END}"
     echo -e "${YELLOW}################################################################################${END}"
