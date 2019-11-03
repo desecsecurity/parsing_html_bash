@@ -37,14 +37,14 @@ __Banner__() {
     echo -e "${YELLOW}#                                                                              #${END}"
     echo -e "${YELLOW}#                             PARSING HTML                                     #${END}"
     echo -e "${YELLOW}#                   Desec Security - Ricardo Longatto                          #${END}"
+    echo -e "${YELLOW}#                             Version $VERSION                                      #${END}"
     echo -e "${YELLOW}#                                                                              #${END}"
     echo -e "${YELLOW}################################################################################${END}"
     echo
-    echo "Usage: $0 [OPTION] [URL]"
+    echo -e "Usage   : ${GREEN}$0${END} [OPTION] [URL]"
+    echo -e "Example : ${GREEN}$0${END} www.site.com"
     echo
-    echo "Ex: $0 www.site.com"
-    echo
-    echo "Try $0 -h for more options."
+    echo -e "Try ${GREEN}$0 -h${END} for more options."
     echo
 }
 
@@ -62,10 +62,13 @@ __Help__() {
     \tO $0 é usado para procurar links em páginas web e verificar se existem \n \
     \thosts vivos.\n \
     \nOPTIONS\n \
-    \t-h) - Mostra o menu de ajuda.\n\n \
-    \t-v) - Mostra a versão do programa.\n\n \
-    \t-o) - Procura links no arquivo informado.\n\n \
-    \t\tEx: $0 -o file.txt\n\n"
+    \t-h, --help\n \
+    \t\tMostra o menu de ajuda.\n\n \
+    \t-v, --version\n \
+    \t\tMostra a versão do programa.\n\n \
+    \t-f, --file\n \
+    \t\tProcura links no arquivo informado.\n\n \
+    \t\tEx: $0 -f file.txt\n\n"
 }
 
 # ==============================================================================
@@ -239,13 +242,13 @@ __Main__() {
     __Verification__
 
     case $ARG01 in
-        "-v") printf "\nVersion: $VERSION\n"
+        "-v"|"--version") printf "\nVersion: $VERSION\n"
               exit 0
         ;;
-        "-h") __Help__
+        "-h"|"--help") __Help__
               exit 0
         ;;
-        "-o") __OpenFile__
+        "-f"|"--file") __OpenFile__
               __FindLinks__
               __ShowLinks__
               __FindHosts__
