@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 ################################################################################
-# Titulo    : Parsing_HTML_Bash                                                #
-# Versao    : 1.5                                                              #
+# Titulo    : Parsing HTML                                                     #
+# Versao    : 1.6                                                              #
 # Data      : 16/10/2019                                                       #
 # Homepage  : https://www.desecsecurity.com                                    #
-# Tested on : macOS/Linux                                                      #
+# Tested on : MacOS/Linux                                                      #
 ################################################################################
 
 # ==============================================================================
@@ -25,7 +25,7 @@ ARG01=$1
 ARG02=$2
 
 # Constante utilizada para guadar a versão do programa.
-VERSION='1.5'
+VERSION='1.6'
 
 # ==============================================================================
 # Banner do programa
@@ -174,10 +174,11 @@ __FindHosts__() {
     # Utilizando expressões regulares para procurar os links simples.
     grep -oh "//[^/]*/" links2 > .tmp10
     grep -oh "//[^/]*" links2 >> .tmp10
-    grep -oh "www.*\.br" links2 >> .tmp10
-    grep -oh "www.*\.net" links2 >> .tmp10
-    grep -oh "www.*\.org[^\.]" links2 >> .tmp10
-    grep -oh "www.*\.com[^\.]" links2 >> .tmp10
+    grep -oh "ww.*\.br" links2 >> .tmp10
+    grep -oh "ww.*\.net" links2 >> .tmp10
+    grep -oh "ww.*\.gov" links2 >> .tmp10
+    grep -oh "ww.*\.org[^.]" links2 >> .tmp10
+    grep -oh "ww.*\.com[^.]" links2 >> .tmp10
 
     # Removendo as barras e filtrando as linhas com pontos.
     sed -i "s/\///g" .tmp10
@@ -240,6 +241,7 @@ __ShowResume__() {
     printf "\n${YELLOW}================================================================================${END}\n\n"
     printf "Found :\t" ; wc -l links
     printf "\t" ; wc -l hosts
+    printf "\n${YELLOW}================================================================================${END}\n\n"
 }
 
 # ==============================================================================
