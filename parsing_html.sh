@@ -2,7 +2,7 @@
 
 ################################################################################
 # Titulo    : Parsing HTML                                                     #
-# Versao    : 1.6                                                              #
+# Versao    : 1.7                                                              #
 # Data      : 16/10/2019                                                       #
 # Homepage  : https://www.desecsecurity.com                                    #
 # Tested on : MacOS/Linux                                                      #
@@ -17,6 +17,7 @@ RED='\033[31;1m'
 GREEN='\033[32;1m'
 BLUE='\033[34;1m'
 YELLOW='\033[33;1m'
+RED_BLINK='\033[31;5;1m'
 END='\033[m'
 
 # Constantes criadas utilizando os valores dos argumentos
@@ -25,7 +26,20 @@ ARG01=$1
 ARG02=$2
 
 # Constante utilizada para guadar a versão do programa.
-VERSION='1.6'
+VERSION='1.7'
+
+# Função chamada quando cancelar o programa com [Ctrl]+[c]
+trap __Ctrl_c__ INT
+
+# ==============================================================================
+# Função chamada ao pressionar as teclas Ctrl+c
+# ==============================================================================
+
+__Ctrl_c__() {
+    __Clear__
+    printf "\n${RED_BLINK}Ação abortada!${END}\n\n"
+    exit 1
+}
 
 # ==============================================================================
 # Banner do programa
