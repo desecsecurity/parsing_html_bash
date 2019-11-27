@@ -192,7 +192,11 @@ __FindHosts__() {
     grep -oh "ww.*\.net" links2 >> .tmp10
     grep -oh "ww.*\.gov" links2 >> .tmp10
     grep -oh "ww.*\.org[^.]" links2 >> .tmp10
-    grep -oh "ww.*\.com[^.]" links2 >> .tmp10
+    grep -oh "ww.*\.com[^.]" links2 >> .tmp1 
+    grep -oh "www.*\.br" links2 >> .tmp10
+    grep -oh "www.*\.net" links2 >> .tmp10
+    grep -oh "www.*\.org[^.]" links2 >> .tmp10
+    grep -oh "www.*\.com[^.]" links2 >> .tmp10
 
     # Removendo as barras e filtrando as linhas com pontos.
     sed -i "s/\///g" .tmp10
