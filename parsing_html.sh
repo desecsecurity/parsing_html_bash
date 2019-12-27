@@ -2,10 +2,15 @@
 
 ################################################################################
 # Titulo    : Parsing HTML                                                     #
-# Versao    : 1.7                                                              #
+# Versao    : 1.8                                                              #
 # Data      : 16/10/2019                                                       #
 # Homepage  : https://www.desecsecurity.com                                    #
 # Tested on : MacOS/Linux                                                      #
+# -----------------------------------------------------------------------------#
+# Descrição:                                                                   #
+#   Esse programa tem a função de procurar todos os links que podem ser        #
+#   considerados uteis para analise, e verificar quais deles estão ativos.     #
+#                                                                              #
 ################################################################################
 
 # ==============================================================================
@@ -26,7 +31,7 @@ ARG01=$1
 ARG02=$2
 
 # Constante utilizada para guadar a versão do programa.
-VERSION='1.7'
+VERSION='1.8'
 
 # Função chamada quando cancelar o programa com [Ctrl]+[c]
 trap __Ctrl_c__ INT
@@ -42,7 +47,10 @@ __Ctrl_c__() {
 }
 
 # ==============================================================================
-# Banner do programa
+#                           Banner do programa
+# ------------------------------------------------------------------------------
+# Função responsável por apenas mostrar o banner do programa junto com algumas
+# opções básicas.
 # ==============================================================================
 
 __Banner__() {
@@ -63,7 +71,10 @@ __Banner__() {
 }
 
 # ==============================================================================
-# Menu de ajuda
+#                                Menu de ajuda
+# ------------------------------------------------------------------------------
+# Função responsável por explicar para o usuário o propósito do programa e como
+# ele funciona, mostrando todas as suas opções.
 # ==============================================================================
 
 __Help__() {
@@ -86,7 +97,11 @@ __Help__() {
 }
 
 # ==============================================================================
-# Verificação básica
+#                           Verificação básica
+# ------------------------------------------------------------------------------
+# Função responsável por verificar todos os requisitos básicos, para o
+# funcionamento do programa, como verificando se os programas e scripts de
+# terceiros estão instalados e se os argumentos foram passados corretamente.
 # ==============================================================================
 
 __Verification__() {
@@ -107,7 +122,10 @@ __Verification__() {
 }
 
 # ==============================================================================
-# Limpando arquivos temporários
+#                       Limpando arquivos temporários
+# ------------------------------------------------------------------------------
+# Função para apagar todos os arquivos temporários criados durante a execução
+# do programa. 
 # ==============================================================================
 
 __Clear__() {
@@ -115,13 +133,17 @@ __Clear__() {
 }
 
 # ==============================================================================
-# Fazendo download da página
+#                           Download da página
+# ------------------------------------------------------------------------------
+# Função responsável por criar o diretório para amazenar o download da página 
+# index do site, e arquivos que serão criados posteriomente.
 # ==============================================================================
 
 __Download__() {
     # É criado e utilizado um diretório em /tmp, para não sujar o sistema do
     # usuário.
     __Clear__
+    
     mkdir /tmp/1 && cd /tmp/1
 
     printf "\n${GREEN}[+] Download do site...${END}\n\n"
@@ -134,7 +156,11 @@ __Download__() {
 }
 
 # ==============================================================================
-# Copiando arquivo para diretório temporario.
+#                       Copiando arquivo da opção -f
+# ------------------------------------------------------------------------------
+# Função responsável por verificar se o nome do arquivo foi informado e se ele
+# existe, caso exista será criado um diretório temporário em /tmp e copiar o
+# arquivo para lá, mudando o seu nome para FILE.
 # ==============================================================================
 
 __OpenFile__() {
@@ -147,13 +173,17 @@ __OpenFile__() {
     fi
 
     __Clear__
+
     mkdir /tmp/1
     cp $ARG02 /tmp/1/FILE
     cd /tmp/1
 }
 
 # ==============================================================================
-# Filtrando links
+#                               Filtrando links
+# ------------------------------------------------------------------------------
+# Função responsável por capturar todos os links completos contidos na página
+# informada e salvalos no arquivo "links"
 # ==============================================================================
 
 __FindLinks__() {
@@ -176,7 +206,11 @@ __FindLinks__() {
 }
 
 # ==============================================================================
-# Filtrando hosts
+#                            Filtrando hosts
+# ------------------------------------------------------------------------------
+# Função responsável por criar uma cópia do arquivo "links" gerado pela função
+# __FindLinks__, para quebrar as urls e selecionando todos os links simples
+# contidos no arquivo.
 # ==============================================================================
 
 __FindHosts__() {
@@ -210,7 +244,7 @@ __LiveHosts__() {
     echo -e "${YELLOW}################################################################################${END}"
     echo
 
-    # Como será a uma das ultimas funções executadas, seu resultado será
+    # Como será uma das ultimas funções executadas, seu resultado será
     # mostrado na tela ao mesmo tempo.
      while read linha; do
         host $linha 2>/dev/null | grep "has address" | awk '{print $4 "\t\t" $1}'
