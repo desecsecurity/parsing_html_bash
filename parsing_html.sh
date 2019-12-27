@@ -63,10 +63,10 @@ __Banner__() {
     echo -e "${YELLOW}#                                                                              #${END}"
     echo -e "${YELLOW}################################################################################${END}"
     echo
-    echo -e "Usage   : ${GREEN}$0${END} [OPTION] [URL]"
-    echo -e "Example : ${GREEN}$0${END} www.site.com"
+    echo -e "Usage   : ${GREEN}${0}${END} [OPTION] [URL]"
+    echo -e "Example : ${GREEN}${0}${END} www.site.com"
     echo
-    echo -e "Try ${GREEN}$0 -h${END} for more options."
+    echo -e "Try ${GREEN}${0} -h${END} for more options."
     echo
 }
 
@@ -80,11 +80,11 @@ __Banner__() {
 __Help__() {
     printf "\
     \nNAME\n \
-    \t$0 - Software para procura de links em páginas web.\n \
+    \t${0} - Software para procura de links em páginas web.\n \
     \nSYNOPSIS\n \
-    \t$0 [Options] [URL]\n \
+    \t${0} [Options] [URL]\n \
     \nDESCRIPTION\n \
-    \tO $0 é usado para procurar links em páginas web e verificar se existem \n \
+    \tO ${0} é usado para procurar links em páginas web e verificar se existem \n \
     \thosts vivos.\n \
     \nOPTIONS\n \
     \t-h, --help\n \
@@ -93,7 +93,7 @@ __Help__() {
     \t\tMostra a versão do programa.\n\n \
     \t-f, --file\n \
     \t\tProcura links no arquivo informado.\n\n \
-    \t\tEx: $0 -f file.txt\n\n"
+    \t\tEx: ${0} -f file.txt\n\n"
 }
 
 # ==============================================================================
@@ -115,7 +115,7 @@ __Verification__() {
     fi
 
     # Verificando se não foi passado argumentos.
-    if [[ "$ARG01" == "" ]]; then
+    if [[ "${ARG01}" == "" ]]; then
         __Banner__
         exit 1
     fi
@@ -147,7 +147,7 @@ __Download__() {
     mkdir /tmp/1 && cd /tmp/1
 
     printf "\n${GREEN}[+] Download do site...${END}\n\n"
-    if wget -q -c --show-progress $ARG01 -O FILE; then
+    if wget -q -c --show-progress ${ARG01} -O FILE; then
         printf "\n${GREEN}[+] Download completo!${END}\n\n"
     else
         printf "\n${RED}[+] Falha no download!${END}\n\n"
@@ -164,18 +164,18 @@ __Download__() {
 # ==============================================================================
 
 __OpenFile__() {
-    if [[ $ARG02 == "" ]]; then
-        echo -e "\n${RED}!!! File required !!!${END}\n"
+    if [[ ${ARG02} == "" ]]; then
+        echo -e "\n${RED}!!! Necessário informar nome do arquivo !!!${END}\n"
         exit 1
-    elif ! [[ -e $ARG02 ]]; then
-        printf "\n${RED}!!! File not found !!!${END}\n"
+    elif ! [[ -e ${ARG02} ]]; then
+        printf "\n${RED}!!! Arquivo não encontrado !!!${END}\n"
         exit 1
     fi
 
     __Clear__
 
     mkdir /tmp/1
-    cp $ARG02 /tmp/1/FILE
+    cp ${ARG02} /tmp/1/FILE
     cd /tmp/1
 }
 
@@ -247,7 +247,7 @@ __LiveHosts__() {
     # Como será uma das ultimas funções executadas, seu resultado será
     # mostrado na tela ao mesmo tempo.
      while read linha; do
-        host $linha 2>/dev/null | grep "has address" | awk '{print $4 "\t\t" $1}'
+        host ${linha} 2>/dev/null | grep "has address" | awk '{print $4 "\t\t" $1}'
      done < hosts
 }
 
@@ -262,7 +262,7 @@ __ShowLinks__() {
     echo -e "${YELLOW}################################################################################${END}"
     echo
     while read linha; do
-        echo $linha
+        echo ${linha}
     done < links
 }
 
@@ -277,7 +277,7 @@ __ShowHosts__() {
     echo -e "${YELLOW}################################################################################${END}"
     echo
     while read linha; do
-        echo $linha
+        echo ${linha}
     done < hosts
 }
 
@@ -299,8 +299,8 @@ __ShowResume__() {
 __Main__() {
     __Verification__
 
-    case $ARG01 in
-        "-v"|"--version") printf "\nVersion: $VERSION\n"
+    case ${ARG01} in
+        "-v"|"--version") printf "\nVersion: ${VERSION}\n"
               exit 0
         ;;
         "-h"|"--help") __Help__
