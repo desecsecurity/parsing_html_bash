@@ -42,7 +42,7 @@ trap __Ctrl_c__ INT
 
 __Ctrl_c__() {
     __Clear__
-    printf "\n${RED_BLINK}Ação abortada!${END}\n\n"
+    printf "\n${RED_BLINK}!!! Ação abortada !!!${END}\n\n"
     exit 1
 }
 
@@ -54,20 +54,21 @@ __Ctrl_c__() {
 # ==============================================================================
 
 __Banner__() {
-    echo
-    echo -e "${YELLOW}################################################################################${END}"
-    echo -e "${YELLOW}#                                                                              #${END}"
-    echo -e "${YELLOW}#                             PARSING HTML                                     #${END}"
-    echo -e "${YELLOW}#                            Desec Security                                    #${END}"
-    echo -e "${YELLOW}#                             Version $VERSION                                      #${END}"
-    echo -e "${YELLOW}#                                                                              #${END}"
-    echo -e "${YELLOW}################################################################################${END}"
-    echo
-    echo -e "Usage   : ${GREEN}${0}${END} [OPTION] [URL]"
-    echo -e "Example : ${GREEN}${0}${END} www.site.com"
-    echo
-    echo -e "Try ${GREEN}${0} -h${END} for more options."
-    echo
+    echo -e "
+        ${YELLOW}
+        ################################################################################
+        #                                                                              #
+        #                             PARSING HTML                                     #
+        #                            Desec Security                                    #
+        #                             Version ${VERSION}                                      #
+        #                                                                              #
+        ################################################################################
+        ${END}
+
+        Usage   : ${GREEN}${0}${END} [OPTION] [URL]
+        Example : ${GREEN}${0}${END} www.site.com
+    
+        Try ${GREEN}${0} -h${END} for more options."
 }
 
 # ==============================================================================
@@ -78,22 +79,27 @@ __Banner__() {
 # ==============================================================================
 
 __Help__() {
-    printf "\
-    \nNAME\n \
-    \t${0} - Software para procura de links em páginas web.\n \
-    \nSYNOPSIS\n \
-    \t${0} [Options] [URL]\n \
-    \nDESCRIPTION\n \
-    \tO ${0} é usado para procurar links em páginas web e verificar se existem \n \
-    \thosts vivos.\n \
-    \nOPTIONS\n \
-    \t-h, --help\n \
-    \t\tMostra o menu de ajuda.\n\n \
-    \t-v, --version\n \
-    \t\tMostra a versão do programa.\n\n \
-    \t-f, --file\n \
-    \t\tProcura links no arquivo informado.\n\n \
-    \t\tEx: ${0} -f file.txt\n\n"
+    echo -e "
+    NAME
+        ${0} - Software para procura de links em páginas web.
+    
+    SYNOPSIS
+        ${0} [Options] [URL]
+
+    DESCRIPTION
+        O ${0} é usado para procurar links em páginas web e verificar se existem
+        hosts vivos.
+
+    OPTIONS
+        -h, --help
+            Mostra o menu de ajuda.
+        
+        -v, --version
+            Mostra a versão do programa.
+        
+        -f, --file
+            Procura links no arquivo informado.
+                Ex: ${0} -f file.txt"
 }
 
 # ==============================================================================
@@ -238,11 +244,11 @@ __FindHosts__() {
 # ==============================================================================
 
 __LiveHosts__() {
-    echo
-    echo -e "${YELLOW}################################################################################${END}"
-    echo -e "${YELLOW}#                            Hosts ativos                                      #${END}"
-    echo -e "${YELLOW}################################################################################${END}"
-    echo
+    echo -e " ${YELLOW}
+################################################################################
+#                            Hosts ativos                                      #
+################################################################################
+${END}"
 
     # Como será uma das ultimas funções executadas, seu resultado será
     # mostrado na tela ao mesmo tempo.
@@ -256,11 +262,12 @@ __LiveHosts__() {
 # ==============================================================================
 
 __ShowLinks__() {
-    echo
-    echo -e "${YELLOW}################################################################################${END}"
-    echo -e "${YELLOW}#                         Links encontrados.                                   #${END}"
-    echo -e "${YELLOW}################################################################################${END}"
-    echo
+    echo -e " ${YELLOW}
+################################################################################    
+#                         Links encontrados.                                   #
+################################################################################
+${END}"
+
     while read linha; do
         echo ${linha}
     done < links
@@ -271,11 +278,12 @@ __ShowLinks__() {
 # ==============================================================================
 
 __ShowHosts__() {
-    echo
-    echo -e "${YELLOW}################################################################################${END}"
-    echo -e "${YELLOW}#                         Hosts encontrados.                                   #${END}"
-    echo -e "${YELLOW}################################################################################${END}"
-    echo
+    echo -e " ${YELLOW}
+################################################################################
+#                         Hosts encontrados.                                   #
+################################################################################
+${END}"
+
     while read linha; do
         echo ${linha}
     done < hosts
@@ -286,10 +294,12 @@ __ShowHosts__() {
 # ==============================================================================
 
 __ShowResume__() {
-    printf "\n${YELLOW}================================================================================${END}\n\n"
-    printf "Found :\t" ; wc -l links
-    printf "\t" ; wc -l hosts
-    printf "\n${YELLOW}================================================================================${END}\n\n"
+    echo -e "
+${YELLOW}================================================================================${END}
+Found :
+        $(wc -l links)
+        $(wc -l hosts)
+${YELLOW}================================================================================${END}"
 }
 
 # ==============================================================================
@@ -300,13 +310,16 @@ __Main__() {
     __Verification__
 
     case ${ARG01} in
-        "-v"|"--version") printf "\nVersion: ${VERSION}\n"
+        "-v"|"--version")
+              printf "\nVersion: ${VERSION}\n"
               exit 0
         ;;
-        "-h"|"--help") __Help__
+        "-h"|"--help")
+              __Help__
               exit 0
         ;;
-        "-f"|"--file") __OpenFile__
+        "-f"|"--file")
+              __OpenFile__
               __FindLinks__
               __ShowLinks__
               __FindHosts__
