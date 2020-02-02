@@ -67,7 +67,7 @@ __Banner__() {
 
         Usage   : ${GREEN}${0}${END} [OPTION] [URL]
         Example : ${GREEN}${0}${END} www.site.com
-    
+
         Try ${GREEN}${0} -h${END} for more options."
 }
 
@@ -82,7 +82,7 @@ __Help__() {
     echo -e "
     NAME
         ${0} - Software para procura de links em páginas web.
-    
+
     SYNOPSIS
         ${0} [Options] [URL]
 
@@ -93,10 +93,10 @@ __Help__() {
     OPTIONS
         -h, --help
             Mostra o menu de ajuda.
-        
+
         -v, --version
             Mostra a versão do programa.
-        
+
         -f, --file
             Procura links no arquivo informado.
                 Ex: ${0} -f file.txt"
@@ -131,7 +131,7 @@ __Verification__() {
 #                       Limpando arquivos temporários
 # ------------------------------------------------------------------------------
 # Função para apagar todos os arquivos temporários criados durante a execução
-# do programa. 
+# do programa.
 # ==============================================================================
 
 __Clear__() {
@@ -141,7 +141,7 @@ __Clear__() {
 # ==============================================================================
 #                           Download da página
 # ------------------------------------------------------------------------------
-# Função responsável por criar o diretório para amazenar o download da página 
+# Função responsável por criar o diretório para amazenar o download da página
 # index do site, e arquivos que serão criados posteriomente.
 # ==============================================================================
 
@@ -149,7 +149,7 @@ __Download__() {
     # É criado e utilizado um diretório em /tmp, para não sujar o sistema do
     # usuário.
     __Clear__
-    
+
     mkdir /tmp/1 && cd /tmp/1
 
     printf "\n${GREEN}[+] Download do site...${END}\n\n"
@@ -232,7 +232,7 @@ __FindHosts__() {
     grep -oh "ww.*\.net" links2 >> .tmp10
     grep -oh "ww.*\.gov" links2 >> .tmp10
     grep -oh "ww.*\.org[^.]" links2 >> .tmp10
-    grep -oh "ww.*\.com[^.]" links2 >> .tmp10 
+    grep -oh "ww.*\.com[^.]" links2 >> .tmp10
 
     # Removendo as barras e filtrando as linhas com pontos.
     sed -i "s/\///g" .tmp10
@@ -263,7 +263,7 @@ ${END}"
 
 __ShowLinks__() {
     echo -e " ${YELLOW}
-################################################################################    
+################################################################################
 #                         Links encontrados.                                   #
 ################################################################################
 ${END}"
