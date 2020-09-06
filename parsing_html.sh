@@ -135,7 +135,7 @@ __Verification__() {
 # ==============================================================================
 
 __Clear__() {
-    rm -rf /tmp/1 &>/dev/null
+    rm -rf /tmp/${ARG01} &>/dev/null
 }
 
 # ==============================================================================
@@ -150,7 +150,7 @@ __Download__() {
     # usuário.
     __Clear__
 
-    mkdir /tmp/1 && cd /tmp/1
+    mkdir /tmp/${ARG01} && cd /tmp/${ARG01}
 
     printf "\n${GREEN}[+] Download do site...${END}\n\n"
     if wget -q -c --show-progress ${ARG01} -O FILE; then
