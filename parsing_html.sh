@@ -2,7 +2,7 @@
 
 ################################################################################
 # Titulo    : Parsing HTML                                                     #
-# Versao    : 1.8                                                              #
+# Versao    : 1.9                                                              #
 # Data      : 16/10/2019                                                       #
 # Homepage  : https://www.desecsecurity.com                                    #
 # Tested on : MacOS/Linux                                                      #
