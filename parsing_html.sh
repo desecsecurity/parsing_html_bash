@@ -252,7 +252,7 @@ ${END}"
 
     # Como será uma das ultimas funções executadas, seu resultado será
     # mostrado na tela ao mesmo tempo.
-     while read linha; do
+     while read -r linha; do
         host "${linha}" 2>/dev/null | grep "has address" | awk '{print $4 "\t\t" $1}'
      done < hosts
 }
@@ -268,7 +268,7 @@ __ShowLinks__() {
 ################################################################################
 ${END}"
 
-    while read linha; do
+    while read -r linha; do
         echo "${linha}"
     done < links
 }
@@ -284,7 +284,7 @@ __ShowHosts__() {
 ################################################################################
 ${END}"
 
-    while read linha; do
+    while read -r linha; do
         echo "${linha}"
     done < hosts
 }
@@ -311,7 +311,7 @@ __Main__() {
 
     case "${ARG01}" in
         "-v"|"--version")
-              printf "\nVersion: ${VERSION}\n"
+              echo -e "\nVersion: ${VERSION}\n"
               exit 0
         ;;
         "-h"|"--help")
