@@ -20,18 +20,17 @@
 # Constantes para facilitar a utilização das cores.
 RED='\033[31;1m'
 GREEN='\033[32;1m'
-BLUE='\033[34;1m'
 YELLOW='\033[33;1m'
 RED_BLINK='\033[31;5;1m'
 END='\033[m'
 
 # Constantes criadas utilizando os valores dos argumentos
 # passados, para evitando a perda dos valores.
-ARG01=$1
-ARG02=$2
+ARG01="${1}"
+ARG02="${2}"
 
 # Constante utilizada para guadar a versão do programa.
-VERSION='1.8'
+VERSION='1.9'
 
 # Função chamada quando cancelar o programa com [Ctrl]+[c]
 trap __Ctrl_c__ INT
@@ -42,7 +41,7 @@ trap __Ctrl_c__ INT
 
 __Ctrl_c__() {
     __Clear__
-    printf "\n${RED_BLINK}!!! Ação abortada !!!${END}\n\n"
+    echo -e "\n${RED_BLINK}!!! Ação abortada !!!${END}\n\n"
     exit 1
 }
 
@@ -113,10 +112,10 @@ __Help__() {
 __Verification__() {
     # Verificando as dependências.
     if ! [[ -e /usr/bin/wget ]]; then
-        printf "\nFaltando programa ${RED}wget${END} para funcionar.\n"
+        echo -e "\nFaltando programa ${RED}wget${END} para funcionar.\n"
         exit 1
     elif ! [[ -e /usr/bin/host ]]; then
-        printf "\nFaltando programa ${RED}host${END} para funcionar.\n"
+        echo -e "\nFaltando programa ${RED}host${END} para funcionar.\n"
         exit 1
     fi
 
@@ -135,7 +134,8 @@ __Verification__() {
 # ==============================================================================
 
 __Clear__() {
-    rm -rf /tmp/${ARG01} &>/dev/null
+    rm -rf /tmp/"${ARG01}" &>/dev/null
+    rm -rf /tmp/tempfile &>/dev/null
 }
 
 # ==============================================================================
@@ -150,13 +150,13 @@ __Download__() {
     # usuário.
     __Clear__
 
-    mkdir /tmp/${ARG01} && cd /tmp/${ARG01}
+    mkdir /tmp/"${ARG01}" && cd /tmp/"${ARG01}"
 
-    printf "\n${GREEN}[+] Download do site...${END}\n\n"
-    if wget -q -c --show-progress ${ARG01} -O FILE; then
-        printf "\n${GREEN}[+] Download completo!${END}\n\n"
+    echo -e "\n${GREEN}[+] Download do site...${END}\n\n"
+    if wget -q -c --show-progress "${ARG01}" -O FILE;then
+        echo -e "\n${GREEN}[+] Download completo!${END}\n\n"
     else
-        printf "\n${RED}[+] Falha no download!${END}\n\n"
+        echo -e "\n${RED}[+] Falha no download!${END}\n\n"
         exit 1
     fi
 }
@@ -170,19 +170,19 @@ __Download__() {
 # ==============================================================================
 
 __OpenFile__() {
-    if [[ ${ARG02} == "" ]]; then
+    if [[ "${ARG02}" == "" ]]; then
         echo -e "\n${RED}!!! Necessário informar nome do arquivo !!!${END}\n"
         exit 1
-    elif ! [[ -e ${ARG02} ]]; then
-        printf "\n${RED}!!! Arquivo não encontrado !!!${END}\n"
+    elif ! [[ -e "${ARG02}" ]]; then
+        echo -e "\n${RED}!!! Arquivo não encontrado !!!${END}\n"
         exit 1
     fi
 
     __Clear__
 
-    mkdir /tmp/1
-    cp ${ARG02} /tmp/1/FILE
-    cd /tmp/1
+    mkdir /tmp/tempfile
+    cp "${ARG02}" /tmp/tempfile/FILE
+    cd /tmp/tempfile
 }
 
 # ==============================================================================
@@ -244,7 +244,7 @@ __FindHosts__() {
 # ==============================================================================
 
 __LiveHosts__() {
-    echo -e " ${YELLOW}
+    echo -e "${YELLOW}
 ################################################################################
 #                            Hosts ativos                                      #
 ################################################################################
@@ -253,7 +253,7 @@ ${END}"
     # Como será uma das ultimas funções executadas, seu resultado será
     # mostrado na tela ao mesmo tempo.
      while read linha; do
-        host ${linha} 2>/dev/null | grep "has address" | awk '{print $4 "\t\t" $1}'
+        host "${linha}" 2>/dev/null | grep "has address" | awk '{print $4 "\t\t" $1}'
      done < hosts
 }
 
@@ -262,14 +262,14 @@ ${END}"
 # ==============================================================================
 
 __ShowLinks__() {
-    echo -e " ${YELLOW}
+    echo -e "${YELLOW}
 ################################################################################
 #                         Links encontrados.                                   #
 ################################################################################
 ${END}"
 
     while read linha; do
-        echo ${linha}
+        echo "${linha}"
     done < links
 }
 
@@ -278,14 +278,14 @@ ${END}"
 # ==============================================================================
 
 __ShowHosts__() {
-    echo -e " ${YELLOW}
+    echo -e "${YELLOW}
 ################################################################################
 #                         Hosts encontrados.                                   #
 ################################################################################
 ${END}"
 
     while read linha; do
-        echo ${linha}
+        echo "${linha}"
     done < hosts
 }
 
@@ -309,7 +309,7 @@ ${YELLOW}=======================================================================
 __Main__() {
     __Verification__
 
-    case ${ARG01} in
+    case "${ARG01}" in
         "-v"|"--version")
               printf "\nVersion: ${VERSION}\n"
               exit 0
